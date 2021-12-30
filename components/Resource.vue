@@ -68,7 +68,7 @@ export default {
         },
         contentTypes: {
             type: Array,
-            required: true
+            required: false
         },
         geographicScopes: {
             type: Array,
