@@ -44,7 +44,7 @@ export default {
     // Doc: https://bootstrap-vue.js.org
     'bootstrap-vue/nuxt',
     '@nuxt/http',
-    'nuxt-i18n',
+    '@nuxtjs/i18n',
     '@nuxtjs/markdownit'
   ],
   bootstrapVue: {

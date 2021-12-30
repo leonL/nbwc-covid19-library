@@ -13,11 +13,11 @@
   },
   "dependencies": {
     "@nuxt/http": "^0.6.4",
+    "@nuxtjs/i18n": "^7.2.0",
     "@nuxtjs/markdownit": "^2.0.0",
     "bootstrap": "^4.6.0",
     "bootstrap-vue": "^2.21.2",
-    "nuxt": "^2.15.3",
-    "nuxt-i18n": "^6.22.2"
+    "nuxt": "^2.15.3"
   },
   "devDependencies": {
     "@nuxtjs/dotenv": "^1.4.1",
