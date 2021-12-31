@@ -56,13 +56,13 @@
           </span>
         </client-only>
 
-        <span class="sortBy">
-          Sort by 
+        <span class="sort-by">
           <b-dropdown right variant="link">
             <template #button-content>
-              {{ "current sort order" }}
+              {{ currentSortOrderDescription }}
             </template>
-            <b-dropdown-item v-for="option in sortOrderOptions" :key="option.id" href="#">{{ option[$i18n.locale] }}</b-dropdown-item>
+            <b-dropdown-item v-for="option in sortOrderOptions" :key="option.id" 
+              v-on:click="updateSortOrderId(option.id)" href="#">{{ option[$i18n.locale] }}</b-dropdown-item>
           </b-dropdown>
         </span>
       </div>
@@ -132,11 +132,12 @@ export default {
       currentPage: 1,
       resourcesPerPage: 10,
       sortOrderOptions: [
-        // {id: 0, byField: 'datePublished', direction: 'desc', en: "date published (new to old)", fr: "date publiée (nouveau à vieux)"},
-        // {id: 1, byField: 'datePublished', direction: 'asc', en: "date published (old to new)", fr: "date publiée (ancien au nouveau)"},
-        {id: 2, byField: 'dateAdded', direction: 'asc', en: "date posted (new to old)", fr: "date postée (nouveau à vieux)"},
-        {id: 3, byField: 'dateAdded', direction: 'desc', en: "date posted (old to new)", fr: "date postée (ancien au nouveau)"}
-      ]
+        {id: 0, byField: 'dateAdded', direction: 'desc', en: "date posted (new to old)", fr: "date postée (nouveau à vieux)"},
+        {id: 1, byField: 'dateAdded', direction: 'asc', en: "date posted (old to new)", fr: "date postée (ancien au nouveau)"}
+        // {id: 2, byField: 'datePublished', direction: 'desc', en: "date published (new to old)", fr: "date publiée (nouveau à vieux)"},
+        // {id: 3, byField: 'datePublished', direction: 'asc', en: "date published (old to new)", fr: "date publiée (ancien au nouveau)"}
+      ],
+      activeSortOrderId: 0
     }
   },
   methods: {
@@ -188,9 +189,35 @@ export default {
 
           return searchRegx.test(keyWords)
         })
-      }     
+      }  
+
+      filteredResources = this.orderBySortField(filteredResources, this.sortOrderOptions[this.activeSortOrderId]);
 
       return filteredResources
+    },
+    orderBySortField(resources, sortOrder) {
+      let orderedResources = resources.sort((aResource, bResource) => {
+        let aDate, bDate,
+          comparisonResult = sortOrder.direction === 'asc' ? -1 : 1;
+        
+        if (sortOrder.byField === "dateAdded") {
+          aDate = new Date(aResource.RECORD_CREATED_DATE),
+            bDate = new Date(bResource.RECORD_CREATED_DATE);
+        } else {
+          aDate = new Date(aResource.publicationYear, aResource.publicationMonth || 0, aResource.publicationDay || 1),
+            bDate = new Date(bResource.publicationYear, bResource.publicationMonth || 0, bResource.publicationDay || 1);
+        }
+
+        if (aDate < bDate) {
+          return comparisonResult;
+        } else if (aDate > bDate) {
+          return comparisonResult * -1;
+        } else {
+          return 0
+        }
+
+      });
+      return orderedResources;
     },
     pageResources() {
       return this.filterResources().slice(...this.currentPageIndexRange)
@@ -267,6 +294,9 @@ export default {
       this.checkedContentTypeIds = []
       this.checkedIssueIds = []
       return true
+    },
+    updateSortOrderId(id) {
+      this.activeSortOrderId = id;
     }
   },
   computed: {
@@ -280,6 +310,13 @@ export default {
     },
     pageResorcesCount() {
       return this.pageResources().length;
+    },
+    currentLocale() {
+      return this.$i18n.locale;
+    },
+    currentSortOrderDescription() {
+      let activeSortOrder = this.sortOrderOptions[this.activeSortOrderId];
+      return activeSortOrder[this.currentLocale];
     }
   },
   components: {
@@ -346,13 +383,13 @@ mark {
   /* border: 1px green dotted; */
 }
 
-.sortBy {
+.sort-by {
   /* border: 1px solid black; */
   position: absolute;
   right: 0;
 }
 
-.sortBy .dropdown .btn {
+.sort-by .dropdown .btn {
   font-size: 16px;
   padding: 0;
   border: 0;
@@ -380,6 +417,16 @@ mark {
   .clear-filters {
     margin-left: 0;
     display: block;
+  }
+
+  .sort-by .dropdown .btn {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .sort-by .dropdown .btn {
+    font-size: 12px;
   }
 }
 </style>
