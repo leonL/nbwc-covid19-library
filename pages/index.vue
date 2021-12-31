@@ -153,24 +153,32 @@ export default {
 
       if (this.checkedScopeIds.length) {
         filteredResources = filteredResources.filter(r => {
-          const rGeoScopeId = r['GEOGRAPHIC SCOPE ID'][0]
+          const rGeoScopeId = r['GEOGRAPHIC SCOPE ID'] ? r['GEOGRAPHIC SCOPE ID'][0] : "";
           return this.checkedScopeIds.includes(rGeoScopeId)
         }) 
       }
 
       if (this.checkedContentTypeIds.length) {
         filteredResources = filteredResources.filter(r => {
-          return r['CONTENT TYPE IDS'].some(id => {
-            return this.checkedContentTypeIds.includes(id)
-          })
+          let contentTypeIds = [];
+          if (r['CONTENT TYPE IDS']) {
+            contentTypeIds = r['CONTENT TYPE IDS'].some(id => {
+              return this.checkedContentTypeIds.includes(id)
+            })
+          }
+          return contentTypeIds;
         })
       }
 
       if (this.checkedIssueIds.length) {
         filteredResources = filteredResources.filter(r => {
-          return r['ISSUE IDS'].some(id => {
-            return this.checkedIssueIds.includes(id)
-          })
+          let issueIds = [];
+          if (r['ISSUE IDS']) {
+            issueIds = r['ISSUE IDS'].some(id => {
+              return this.checkedIssueIds.includes(id)
+            })
+          }
+          return issueIds;
         })
       }
 
