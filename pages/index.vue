@@ -40,20 +40,33 @@
         <b-form-input v-model="searchInputText" :placeholder="$t('searchPlaceholder')" debounce="500" 
           class="search" :aria-label="$t('searchPlaceholder')"></b-form-input>
       </div>
-      
-      <client-only>
-        <span v-if="totalResourcesCount > resourcesPerPage" class="resource-count">
-          {{ currentPageIndexRange[0] + 1 }} 
-          &#8211; {{ currentPageIndexRange[0] + pageResorcesCount }}
-          {{ $t('of') }} {{ totalResourcesCount }} {{ $t('results') }}
+  
+      <div class='list-details'>
+        <client-only>
+          <span v-if="totalResourcesCount > resourcesPerPage" class="resource-count">
+            {{ currentPageIndexRange[0] + 1 }} 
+            &#8211; {{ currentPageIndexRange[0] + pageResorcesCount }}
+            {{ $t('of') }} {{ totalResourcesCount }} {{ $t('results') }}
+          </span>
+          <span v-else-if="totalResourcesCount === 0" class="resource-count zero">
+            {{ $t('noResult') }}
+          </span>
+          <span v-else class="resource-count one-pager">
+            {{ totalResourcesCount }} {{ $t('singlePageResults') }}
+          </span>
+        </client-only>
+
+        <span class="sortBy">
+          Sort by 
+          <b-dropdown right variant="link">
+            <template #button-content>
+              {{ "current sort order" }}
+            </template>
+            <b-dropdown-item v-for="option in sortOrderOptions" :key="option.id" href="#">{{ option[$i18n.locale] }}</b-dropdown-item>
+          </b-dropdown>
         </span>
-        <span v-else-if="totalResourcesCount === 0" class="resource-count zero">
-          {{ $t('noResult') }}
-        </span>
-        <span v-else class="resource-count one-pager">
-          {{ totalResourcesCount }} {{ $t('singlePageResults') }}
-        </span>
-      </client-only>
+      </div>
+
 
       <ul id="resources-list" class="resources">
         <Resource
@@ -117,7 +130,13 @@ export default {
       paywallTexts: { en: data.text[0]['HELP:PAYWALL'], fr: data.text[1]['HELP:PAYWALL'] },
       subtitleTexts: { en: data.text[0]['HOME:SUBTITLE'], fr: data.text[1]['HOME:SUBTITLE'] },
       currentPage: 1,
-      resourcesPerPage: 10
+      resourcesPerPage: 10,
+      sortOrderOptions: [
+        // {id: 0, byField: 'datePublished', direction: 'desc', en: "date published (new to old)", fr: "date publiée (nouveau à vieux)"},
+        // {id: 1, byField: 'datePublished', direction: 'asc', en: "date published (old to new)", fr: "date publiée (ancien au nouveau)"},
+        {id: 2, byField: 'dateAdded', direction: 'asc', en: "date posted (new to old)", fr: "date postée (nouveau à vieux)"},
+        {id: 3, byField: 'dateAdded', direction: 'desc', en: "date posted (old to new)", fr: "date postée (ancien au nouveau)"}
+      ]
     }
   },
   methods: {
@@ -320,6 +339,27 @@ mark {
   font-weight: bold;
   color: #000000;
   margin-bottom: 15px;
+}
+
+.list-details {
+  position: relative;
+  /* border: 1px green dotted; */
+}
+
+.sortBy {
+  /* border: 1px solid black; */
+  position: absolute;
+  right: 0;
+}
+
+.sortBy .dropdown .btn {
+  font-size: 16px;
+  padding: 0;
+  border: 0;
+  position: relative;
+  bottom: 2px;
+  color: black;
+  font-weight: bold;
 }
 
 @media screen and (max-width: 767px) {
