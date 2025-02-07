@@ -14,10 +14,6 @@
           <img src="~/assets/fb_logo.png" class="logo"
             alt="Facebook logo">
         </a>
-        <a :href="$t('twitterURL')" target="_blank">
-          <img src="~/assets/twitter_logo.png" class="logo"
-            alt="Twitter logo">
-        </a>
       </div>
     </div>
 </template>
